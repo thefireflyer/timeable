@@ -15,11 +15,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  filter: drop-shadow(0 0 1vw black);
-  background-color: rgba(0, 0, 0, 0.2);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+  //filter: drop-shadow(0 0 1vw black);
+  //background-color: rgba(0, 0, 0, 0.2);
   }
 
 @media (max-width: 600px) {
@@ -110,14 +107,15 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 85vh;
+  height: 100vh;
 }
 
 .section {
   position: absolute;
   top: 1vh;
   width: 94vw;
-  height: 84vh;
+  height: 100vh;
+  
   //background-color: #222;
   //border-radius: 20px;
   overflow-y: scroll;
@@ -143,25 +141,58 @@
   border-radius: 20px;
   height: 10vh;
   min-height: 50px;
+  margin-bottom: 1vh;
+  * {
+    pointer-events: none;
+  }
   h3 {
-    color: white;
+    color: red;
+    text-decoration: overline;
+  }
+  h2 {
+    position: relative;
+    top: -2rem;
+    left: 2rem;
+    color: adjust-hue($color: red, $degrees: 60);
+  }
+  h4 {
 
   }
+  padding: 1rem;
+  display: flex;
   
-  background-color: #222;
+  overflow: hidden;
 }
 .timeSegment:active {
-  background-color: #111;
+  border: white 1px solid;
 }
 
 #timeSegmentOptions {
   position: absolute;
   width: 100vw;
-  height: 65vh;
+  height: 72vh;
   top: 100vh;
   background-color: #111;
-  transition: top 1s;
-  border-radius: 20px;
+  transition: top 0.5s;
+  //filter: drop-shadow(0 0 3vw black);
+  overflow-y: scroll;
+  padding: 1rem;
+  padding-bottom: 2vh;
+
+  //border: solid white 1px;
+  border-radius: 1rem;
+
+  input {
+    background-color: #111;
+    color: white;
+    font-size:x-large;
+    border: solid white 1px;
+    border-radius: 1rem;
+    padding: 1rem;
+    width: 100%;
+    margin-top:1rem;
+  }
+
 }
 
 @media (min-width: 600px) {

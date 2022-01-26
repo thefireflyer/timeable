@@ -4,6 +4,10 @@ import styles from '../styles/Home.module.scss'
 
 const storedData = "timeable.data"
 
+function NavBarSpacer () {
+  return(<div style={{marginBottom:`16vh`}}></div>)
+}
+
 export default class Home extends Component {
   constructor(props) {
     super(props)
@@ -12,8 +16,8 @@ export default class Home extends Component {
     }
     for (let i = 1; i <= 24; i++) {
       this.state.timeSegments.push({
-        title:"",
-        desc: "",
+        title:"test",
+        desc: "test2",
         activity: null,
         hour: i
       })
@@ -55,6 +59,56 @@ export default class Home extends Component {
 
   }
 
+  updateData() {
+    
+    
+    let optionsMenu = document.getElementById(styles.timeSegmentOptions)
+
+    this.state.currentSegment().title = optionsMenu.querySelector("#title").value
+    this.state.currentSegment().desc = optionsMenu.querySelector("#description").value
+
+    this.forceUpdate()
+  }
+
+  saveData(){
+    localStorage.setItem(storedData, JSON.stringify(this.state))
+  }
+  closeAll()
+  {
+    this.updateData()
+    document.getElementById(styles.container).style.left = `0`
+    document.getElementById(styles.closeSettings).style.display = `none`
+    document.getElementById(styles.timeSegmentOptions).style.top = `100vh`;
+    this.saveData()
+  }
+
+  mouseDown(info) {
+    this.state.eventInfo = info
+    this.state.mouseTimer = window.setTimeout(() => this.execMouseDown(),500); //set timeout to fire in 2 seconds when the user presses mouse button down
+  }
+
+  mouseUp() { 
+    if (this.state.mouseTimer) window.clearTimeout(this.state.mouseTimer);  //cancel timer when mouse button is released
+    this.state.eventInfo = null
+  }
+
+  execMouseDown() {
+    let currentTarget = this.state.eventInfo.touches?.item("0").target||this.state.eventInfo.target
+    console.log(currentTarget)
+    console.log(currentTarget.attributes.segment.value)
+
+    this.state.currentSegment = () => {return(this.state.timeSegments[currentTarget.attributes.segment.value-1])}
+
+    let optionsMenu = document.getElementById(styles.timeSegmentOptions)
+
+    optionsMenu.querySelector("#title").value = this.state.currentSegment().title
+    optionsMenu.querySelector("#description").value = this.state.currentSegment().desc
+
+    let optionMenu = document.getElementById(styles.timeSegmentOptions)
+    optionMenu.style.top = `30vh`;
+    document.getElementById(styles.closeSettings).style.display = `block`
+  }
+
   render() {
     return (
       <div id={styles.container}>
@@ -83,15 +137,20 @@ export default class Home extends Component {
                 return(
                 <div key={timeSegment.hour}
                  className={styles.timeSegment}
-                 onTouchStart={mouseDown}
-                 onMouseDown={mouseDown}
-                 onTouchEnd={mouseUp}
-                 onTouchCancel={mouseUp}
-                 onMouseUp={mouseUp}>
-                  <h3>{timeSegment.title}</h3>
+                 onTouchStart={e => this.mouseDown(e)}
+                 onMouseDown={e => this.mouseDown(e)}
+                 onTouchEnd={() => this.mouseUp()}
+                 onTouchCancel={() => this.mouseUp()}
+                 onMouseUp={() => this.mouseUp()}
+                 style={{backgroundColor:timeSegment.activity?.color||`#222`}}
+                 segment={timeSegment.hour}>
+                  <h3>{timeSegment.hour+`:00`}</h3>
+                  <h2>{timeSegment.title}</h2>
+                  <h4>{timeSegment.desc}</h4>
                 </div>
                 )
               })}
+              <NavBarSpacer></NavBarSpacer>
             </div>
 
             <div className={styles.menubar}>
@@ -115,7 +174,7 @@ export default class Home extends Component {
             document.getElementById(styles.closeSettings).style.display = `block`
           }} id={styles.openSettings}><span className={"material-icons-outlined "+styles.pin} >settings</span></a>
 
-          <a onClick={closeAll} id={styles.closeSettings}></a>
+          <a onClick={() => this.closeAll()} id={styles.closeSettings}></a>
 
 
           <div id={styles.bottomPins} >
@@ -131,8 +190,23 @@ export default class Home extends Component {
           </div>
 
           <div id={styles.timeSegmentOptions}>
-              
-            </div>
+            
+            <input type={`text`} placeholder={`title`} id={`title`}></input>
+            <input type={`text`} placeholder={`description`} id={`description`}></input>
+
+            {
+
+              ///TODO: activity dropdown
+
+              ///TODO: color coding
+
+              ///TODO: todo list
+
+              ///TODO: reminders
+
+            }
+            <NavBarSpacer></NavBarSpacer>
+          </div>
 
         </main>
         
@@ -142,16 +216,6 @@ export default class Home extends Component {
               <h1>Settings</h1>
 
               <br></br>
-
-              <a onClick={() => {
-                
-                saveData(this.state)
-                
-                this.forceUpdate()
-
-                closeAll()
-
-              }} ><h2>Update and save</h2></a>
 
             </center>
           </div>
@@ -167,19 +231,26 @@ function closeAll()
   document.getElementById(styles.container).style.left = `0`
   document.getElementById(styles.closeSettings).style.display = `none`
   document.getElementById(styles.timeSegmentOptions).style.top = `100vh`;
+  saveData()
 }
 
 
 var mouseTimer;
-function mouseDown() { 
-    mouseTimer = window.setTimeout(execMouseDown,500); //set timeout to fire in 2 seconds when the user presses mouse button down
+var eventInfo;
+function mouseDown(info) {
+  eventInfo = info
+  mouseTimer = window.setTimeout(execMouseDown,500); //set timeout to fire in 2 seconds when the user presses mouse button down
 }
 
 function mouseUp() { 
-    if (mouseTimer) window.clearTimeout(mouseTimer);  //cancel timer when mouse button is released
+  if (mouseTimer) window.clearTimeout(mouseTimer);  //cancel timer when mouse button is released
+  eventInfo = null
 }
 
 function execMouseDown() {
+  let currentTarget = eventInfo.touches?.item("0").target||eventInfo.target
+  console.log(currentTarget)
+  console.log(currentTarget.attributes.segment)
   let optionMenu = document.getElementById(styles.timeSegmentOptions)
   optionMenu.style.top = `30vh`;
   document.getElementById(styles.closeSettings).style.display = `block`
