@@ -167,7 +167,7 @@ export default class Home extends Component {
           </div>
 
 
-
+          <div className={styles.dropOff}></div>
 
           <a onClick={() => {
             if (screen.width > 600){
