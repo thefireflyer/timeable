@@ -30,20 +30,49 @@ export default class Home extends Component {
       const date = new Date();
       
       document.getElementById(styles.offlineIcon).style.display = navigator.onLine?`none`:`block`;
-      this.forceUpdate()
+
+      this.forceUpdate()      
+      
+      let currentSegment = this.state.timeSegments[date.getHours()-1]
+
+      if (currentSegment && date.getMinutes() < 1 && date.getSeconds < 10)
+      {
+        var img = '/timeable/icon.png';
+        var text = currentSegment.title + ` now starting.
+` + currentSegment.desc;
+        var notification = new Notification('Timeable - activity reminder', { body: text, icon: img });
+      }
 
     }, 10000, this.state);
 
+    let remindersLoop = window.setInterval(state => {   
+    }, 60000, this.state);
 
-    /*
+    
+//     const date = new Date();   
+//     let currentSegment = this.state.timeSegments[date.getHours()-1]
+//     var img = '/timeable/icon.png';
+//     var text = currentSegment.title + ` now starting.
+// ` + currentSegment.desc;
+//     var notification = new Notification('Timeable - activity reminder', { body: text, icon: img });
+
+    ///*
     let data = localStorage.getItem(storedData)
     
     if (data == null)
     {
-      saveData(this.state)
+      this.saveData()
     }
+    try {
+      this.setState(JSON.parse(data))
+      //this.state = JSON.parse(data)
+    }
+    catch(err){
+      console.log(err)
+      this.saveData()
+    }//*/
 
-    this.state = JSON.parse(data)*/
+    this.forceUpdate()
 
     Notification.requestPermission().then(function(result) {
       console.log(result);
