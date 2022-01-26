@@ -1,0 +1,1 @@
+self.addEventListener("notificationclose",(function(i){var n=i.notification.data.primaryKey;console.log("Closed notification: "+n)})),self.addEventListener("notificationclick",(function(i){var n=i.notification;n.data.primaryKey,"close"===i.action||clients.openWindow("http://www.example.com"),n.close()}));
