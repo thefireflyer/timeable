@@ -84,7 +84,10 @@ export default class Home extends Component {
                 <div key={timeSegment.hour}
                  className={styles.timeSegment}
                  onTouchStart={mouseDown}
-                 onMouseDown={mouseDown}>
+                 onMouseDown={mouseDown}
+                 onTouchEnd={mouseUp}
+                 onTouchCance={mouseUp}
+                 onMouseUp={mouseUp}>
                   <h3>{timeSegment.title}</h3>
                 </div>
                 )
@@ -138,13 +141,6 @@ export default class Home extends Component {
             <center id={styles.settingsPanel}>
               <h1>Settings</h1>
 
-              <h2>general</h2>
-              <input type={`checkbox`} id='clock-mode'></input><span>12 hour clock</span>
-              <br></br>
-              <input type={`checkbox`} id='bookmarks-visible'></input><span>bookmarks</span>
-              <br></br>
-              <input id="background-url" type={`url`} placeholder='url'></input><br></br><span>background image url</span>
-
               <br></br>
 
               <a onClick={() => {
@@ -176,9 +172,6 @@ function closeAll()
 
 var mouseTimer;
 function mouseDown() { 
-    document.addEventListener(document.onmouseup, mouseUp);
-    document.addEventListener(document.ontouchend, mouseUp);
-    document.addEventListener(document.ontouchcancel, mouseUp);
     mouseTimer = window.setTimeout(execMouseDown,500); //set timeout to fire in 2 seconds when the user presses mouse button down
 }
 

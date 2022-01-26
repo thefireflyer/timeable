@@ -1,9 +1,9 @@
 {
     "theme_color": "#9013fe",
     "background_color": "#000000",
-    "display": "browser",
-    "scope": "/timeable",
-    "start_url": "/timeable",
+    "display": "standalone",
+    "scope": "/timeable/",
+    "start_url": "/timeable/index.html",
     "name": "timeable",
     "short_name": "timeable",
     "description": "Free open source time management app",
