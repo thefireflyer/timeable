@@ -155,10 +155,12 @@
     top: -1rem;
     right: 1rem;
     color: adjust-hue($color: red, $degrees: 60);
+    max-width: 75%;
   }
   h4 {
     position: absolute;
     right: 2rem;
+    max-width: 70%;
   }
   padding: 1rem;
   display: flex;
