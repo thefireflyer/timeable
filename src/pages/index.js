@@ -86,7 +86,7 @@ export default class Home extends Component {
                  onTouchStart={mouseDown}
                  onMouseDown={mouseDown}
                  onTouchEnd={mouseUp}
-                 onTouchCance={mouseUp}
+                 onTouchCancel={mouseUp}
                  onMouseUp={mouseUp}>
                   <h3>{timeSegment.title}</h3>
                 </div>
