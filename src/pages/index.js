@@ -16,8 +16,8 @@ export default class Home extends Component {
     }
     for (let i = 1; i <= 24; i++) {
       this.state.timeSegments.push({
-        title:"test",
-        desc: "test2",
+        title:"",
+        desc: "",
         activity: null,
         hour: i
       })
@@ -61,7 +61,8 @@ export default class Home extends Component {
 
   updateData() {
     
-    
+    if (!this.state.currentSegment)return;
+
     let optionsMenu = document.getElementById(styles.timeSegmentOptions)
 
     this.state.currentSegment().title = optionsMenu.querySelector("#title").value
@@ -79,6 +80,10 @@ export default class Home extends Component {
     document.getElementById(styles.container).style.left = `0`
     document.getElementById(styles.closeSettings).style.display = `none`
     document.getElementById(styles.timeSegmentOptions).style.top = `100vh`;
+
+    this.state.currentSegment = null
+    this.state.mouseTimer = null
+    this.state.eventInfo = null
     this.saveData()
   }
 
@@ -142,7 +147,7 @@ export default class Home extends Component {
                  onTouchEnd={() => this.mouseUp()}
                  onTouchCancel={() => this.mouseUp()}
                  onMouseUp={() => this.mouseUp()}
-                 style={{backgroundColor:timeSegment.activity?.color||`#222`}}
+                 style={{borderColor:timeSegment.activity?.color||`#333`}}
                  segment={timeSegment.hour}>
                   <h3>{timeSegment.hour+`:00`}</h3>
                   <h2>{timeSegment.title}</h2>
