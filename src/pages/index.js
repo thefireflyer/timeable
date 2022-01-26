@@ -14,7 +14,7 @@ export default class Home extends Component {
     this.state = {
       timeSegments : []
     }
-    for (let i = 1; i <= 24; i++) {
+    for (let i = 0; i <= 24; i++) {
       this.state.timeSegments.push({
         title:"",
         desc: "",
@@ -33,29 +33,18 @@ export default class Home extends Component {
 
       this.forceUpdate()      
       
-      let currentSegment = this.state.timeSegments[date.getHours()-1]
+      let currentSegment = this.state.timeSegments[date.getHours()]
 
       if (currentSegment && date.getMinutes() < 1 && date.getSeconds < 10)
       {
         var img = '/timeable/icon.png';
         var text = currentSegment.title + ` now starting.
 ` + currentSegment.desc;
-        var notification = new Notification('Timeable - activity reminder', { body: text, icon: img });
+        //var notification = new Notification('Timeable - activity reminder', { body: text, icon: img });
+        displayNotification(text)
       }
 
     }, 10000, this.state);
-
-    let remindersLoop = window.setInterval(state => {   
-    }, 60000, this.state);
-
-    
-//     const date = new Date();   
-//     let currentSegment = this.state.timeSegments[date.getHours()-1]
-//     var img = '/timeable/icon.png';
-//     var text = currentSegment.title + ` now starting.
-// ` + currentSegment.desc;
-//     var notification = new Notification('Timeable - activity reminder', { body: text, icon: img });
-
     ///*
     let data = localStorage.getItem(storedData)
     
@@ -83,6 +72,7 @@ export default class Home extends Component {
   
     document.body.addEventListener("mouseup", mouseUp);  //listen for mouse up event on body, not just the element you originally clicked on
     
+    displayNotification("starting app | TODO: remove; for testing only")
 
     this.forceUpdate()
 
@@ -131,7 +121,7 @@ export default class Home extends Component {
     console.log(currentTarget)
     console.log(currentTarget.attributes.segment.value)
 
-    this.state.currentSegment = () => {return(this.state.timeSegments[currentTarget.attributes.segment.value-1])}
+    this.state.currentSegment = () => {return(this.state.timeSegments[currentTarget.attributes.segment.value])}
 
     let optionsMenu = document.getElementById(styles.timeSegmentOptions)
 
@@ -288,4 +278,27 @@ function execMouseDown() {
   let optionMenu = document.getElementById(styles.timeSegmentOptions)
   optionMenu.style.top = `30vh`;
   document.getElementById(styles.closeSettings).style.display = `block`
+}
+
+function displayNotification(body) {
+  if (Notification.permission == 'granted') {
+    navigator.serviceWorker.getRegistration().then(function(reg) {
+      var options = {
+        body: body,
+        icon: 'icon.png',
+        vibrate: [100, 50, 100],
+        data: {
+          dateOfArrival: Date.now(),
+          primaryKey: 1
+        },
+        actions: [
+          {action: 'snooze', title: 'snooze',
+            icon: 'icon.png'},
+          {action: 'markAsComplete', title: 'mark as complete',
+            icon: 'icon.png'},
+        ]
+      };
+      reg.showNotification('timeable', options);
+    });
+  }
 }
