@@ -44,16 +44,25 @@
 
 #settingsPanel {
 
-  height: fit-content;
+  height: 100vh;
+  overflow-y: scroll;
   width: 100%;
 
   padding: 1rem;
-
+  h3 {
+    border-radius: 1rem;
+    padding: 1rem;
+    width:100%;
+    border: #333 solid 1px;
+  }
 }
 
-#settingsPanel a :hover {
-  color: orange;
-  filter: drop-shadow(0 0 1vw black);
+#settingsPanel a:hover {
+  //color: orange;
+  //filter: drop-shadow(0 0 1vw black);
+}
+#settingsPanel h3:active {
+  background-color: #333;
 }
 
 #closeSettings {

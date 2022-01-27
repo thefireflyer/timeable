@@ -26,7 +26,7 @@ export default class Home extends Component {
   
   componentDidMount() {
     let mainLoop = window.setInterval(state => {      
-      const date = new Date();
+      const date = new Date()//2022, 1, 26, 20, 0, 0);
       
       document.getElementById(styles.offlineIcon).style.display = navigator.onLine?`none`:`block`;
 
@@ -34,13 +34,14 @@ export default class Home extends Component {
       
       let currentSegment = this.state.timeSegments[date.getHours()]
 
-      if (currentSegment && date.getMinutes() < 1 && date.getSeconds < 11)
+      if (currentSegment && date.getMinutes() < 1)
       {
         var img = '/timeable/icon.png';
         var text = currentSegment.title + ` now starting.
 ` + currentSegment.desc;
-        //var notification = new Notification('Timeable - activity reminder', { body: text, icon: img });
         displayNotification(text)
+        //var notification = new Notification('Timeable - activity reminder', { body: text, icon: img });
+        
       }
 
     }, 10000, this.state);
@@ -71,7 +72,9 @@ export default class Home extends Component {
   
     document.body.addEventListener("mouseup", mouseUp);  //listen for mouse up event on body, not just the element you originally clicked on
     
+    
     //displayNotification("starting app | TODO: remove; for testing only")
+    
 
     this.forceUpdate()
 
@@ -90,6 +93,9 @@ export default class Home extends Component {
   }
 
   saveData(){
+    this.state.currentSegment = null
+    this.state.mouseTimer = null
+    this.state.eventInfo = null
     localStorage.setItem(storedData, JSON.stringify(this.state))
   }
   closeAll()
@@ -99,15 +105,12 @@ export default class Home extends Component {
     document.getElementById(styles.closeSettings).style.display = `none`
     document.getElementById(styles.timeSegmentOptions).style.top = `100vh`;
 
-    this.state.currentSegment = null
-    this.state.mouseTimer = null
-    this.state.eventInfo = null
     this.saveData()
   }
 
-  mouseDown(info) {
+  mouseDown(info, onTimeout) {
     this.state.eventInfo = info
-    this.state.mouseTimer = window.setTimeout(() => this.execMouseDown(),500); //set timeout to fire in 2 seconds when the user presses mouse button down
+    this.state.mouseTimer = window.setTimeout(() => onTimeout(),500); //set timeout to fire in 2 seconds when the user presses mouse button down
   }
 
   mouseUp() { 
@@ -130,6 +133,21 @@ export default class Home extends Component {
     let optionMenu = document.getElementById(styles.timeSegmentOptions)
     optionMenu.style.top = `30vh`;
     document.getElementById(styles.closeSettings).style.display = `block`
+  }
+
+  clearTimeSegmentData () {
+    this.state.timeSegments.forEach(timeSegment => {
+      timeSegment.title = ""
+      timeSegment.desc = ""
+    })
+
+    this.saveData()
+    this.forceUpdate()
+  }
+
+  clearAllAppData (){
+    localStorage.setItem(storedData, null)
+    location.reload()
   }
 
   render() {
@@ -160,11 +178,14 @@ export default class Home extends Component {
                 return(
                 <div key={timeSegment.hour}
                  className={styles.timeSegment}
-                 onTouchStart={e => this.mouseDown(e)}
-                 onMouseDown={e => this.mouseDown(e)}
+                 onTouchStart={e => this.mouseDown(e, () => this.execMouseDown())}
+                 onMouseDown={e => this.mouseDown(e, () => this.execMouseDown())}
                  onTouchEnd={() => this.mouseUp()}
                  onTouchCancel={() => this.mouseUp()}
                  onMouseUp={() => this.mouseUp()}
+                 onTouchMove={e => {
+                   //TODO: add support for swipe gestures, left for settings, right to clear?
+                 }}
                  style={{borderColor:timeSegment.activity?.color||`#333`}}
                  segment={timeSegment.hour}>
                   <h3>{timeSegment.hour+`:00`}</h3>
@@ -238,7 +259,22 @@ export default class Home extends Component {
             <center id={styles.settingsPanel}>
               <h1>Settings</h1>
 
-              <br></br>
+              <h3 
+              onTouchStart={e => this.mouseDown(e, () => this.clearTimeSegmentData())}
+              onMouseDown={e => this.mouseDown(e, () => this.clearTimeSegmentData())}
+              onTouchEnd={() => this.mouseUp()}
+              onTouchCancel={() => this.mouseUp()}
+              onMouseUp={() => this.mouseUp()}
+              >Clear time data</h3>
+              <h3
+              onTouchStart={e => this.mouseDown(e, () => this.clearAllAppData())}
+              onMouseDown={e => this.mouseDown(e, () => this.clearAllAppData())}
+              onTouchEnd={() => this.mouseUp()}
+              onTouchCancel={() => this.mouseUp()}
+              onMouseUp={() => this.mouseUp()}
+              style={{backgroundColor:`red`,color:`black`}}>Clear ALL data</h3>
+              
+              <NavBarSpacer></NavBarSpacer>
 
             </center>
           </div>
