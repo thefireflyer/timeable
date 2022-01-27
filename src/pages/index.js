@@ -34,7 +34,7 @@ export default class Home extends Component {
       
       let currentSegment = this.state.timeSegments[date.getHours()]
 
-      if (currentSegment && date.getMinutes() < 1 && date.getSeconds < 8)
+      if (currentSegment && date.getMinutes() < 1 && date.getSeconds < 11)
       {
         var img = '/timeable/icon.png';
         var text = currentSegment.title + ` now starting.

@@ -1,3 +1,3 @@
-# HomePortal
+# Documentation
 
-a free open source home page for browsers
+TODO: add documentation
