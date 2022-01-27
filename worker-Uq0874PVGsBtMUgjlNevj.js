@@ -1,1 +1,0 @@
-self.addEventListener("notificationclose",(function(i){var n=i.notification.data.primaryKey;console.log("Closed notification: "+n)})),self.addEventListener("notificationclick",(function(i){var n=i.notification,o=(n.data.primaryKey,i.action);"snooze"===o||"markAsComplete"===o||clients.openWindow("/timeable/index.html"),n.close()}));
