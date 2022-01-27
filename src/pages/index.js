@@ -25,7 +25,6 @@ export default class Home extends Component {
   }
   
   componentDidMount() {
-    
     let mainLoop = window.setInterval(state => {      
       const date = new Date();
       
@@ -35,7 +34,7 @@ export default class Home extends Component {
       
       let currentSegment = this.state.timeSegments[date.getHours()]
 
-      if (currentSegment && date.getMinutes() < 1 && date.getSeconds < 10)
+      if (currentSegment && date.getMinutes() < 1 && date.getSeconds < 8)
       {
         var img = '/timeable/icon.png';
         var text = currentSegment.title + ` now starting.
@@ -72,7 +71,7 @@ export default class Home extends Component {
   
     document.body.addEventListener("mouseup", mouseUp);  //listen for mouse up event on body, not just the element you originally clicked on
     
-    displayNotification("starting app | TODO: remove; for testing only")
+    //displayNotification("starting app | TODO: remove; for testing only")
 
     this.forceUpdate()
 
@@ -282,7 +281,7 @@ function execMouseDown() {
 
 function displayNotification(body) {
   if (Notification.permission == 'granted') {
-    navigator.serviceWorker.getRegistration().then(function(reg) {
+    navigator.serviceWorker.getRegistration().then(reg => {
       var options = {
         body: body,
         icon: 'icon.png',

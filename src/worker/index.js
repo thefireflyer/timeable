@@ -13,10 +13,16 @@ self.addEventListener('notificationclick', function(e) {
     var primaryKey = notification.data.primaryKey;
     var action = e.action;
   
-    if (action === 'close') {
+    if (action === 'snooze') {
+      // TODO: implement snooze functionality
       notification.close();
-    } else {
-      clients.openWindow('http://www.example.com');
+    } 
+    else if (action === 'markAsComplete')
+    {
+      notification.close();
+    }
+    else {
+      clients.openWindow('/timeable/index.html');
       notification.close();
     }
   });
