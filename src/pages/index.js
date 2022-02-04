@@ -3,6 +3,7 @@ import React, { Component, useState } from 'react'
 import styles from '../styles/Home.module.scss'
 
 const storedData = "timeable.data"
+const loopTime = 30
 
 function NavBarSpacer () {
   return(<div style={{marginBottom:`16vh`}}></div>)
@@ -12,7 +13,8 @@ export default class Home extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      timeSegments : []
+      timeSegments : [],
+      notifications : false,
     }
     for (let i = 0; i <= 24; i++) {
       this.state.timeSegments.push({
@@ -24,27 +26,37 @@ export default class Home extends Component {
     }
   }
   
-  componentDidMount() {
-    let mainLoop = window.setInterval(state => {      
-      const date = new Date()//2022, 1, 26, 20, 0, 0);
-      
-      document.getElementById(styles.offlineIcon).style.display = navigator.onLine?`none`:`block`;
+  updateLoop() {
+    console.log(this.state)    
+    var date = new Date()//2022, 2, 3, 6);
+    
+    document.getElementById(styles.offlineIcon).style.display = navigator.onLine?`none`:`block`;
 
-      this.forceUpdate()      
-      
-      let currentSegment = this.state.timeSegments[date.getHours()]
+    this.forceUpdate()      
+    
+    let currentSegment = this.state.timeSegments[date.getHours()]
 
-      if (currentSegment && date.getMinutes() < 1)
-      {
+    console.log(date.getHours())
+    console.log(currentSegment)
+    if (currentSegment.title != "" && this.state.notifications)
+    {
+      if (date.getMinutes() < 1 && date.getSeconds() < loopTime)
+      {console.log("displaying notifications")
         var img = '/timeable/icon.png';
         var text = currentSegment.title + ` now starting.
-` + currentSegment.desc;
+  ` + currentSegment.desc;
         displayNotification(text)
         //var notification = new Notification('Timeable - activity reminder', { body: text, icon: img });
-        
       }
+      else {
+        console.log(date.getMinutes())
+        console.log(date.getSeconds())
+      }
+    }
+  }
 
-    }, 10000, this.state);
+  componentDidMount() {
+    let mainLoop = window.setInterval(() => {this.updateLoop()}, loopTime*1000);
     ///*
     let data = localStorage.getItem(storedData)
     
@@ -52,6 +64,7 @@ export default class Home extends Component {
     {
       this.saveData()
     }
+
     try {
       this.setState(JSON.parse(data))
       //this.state = JSON.parse(data)
@@ -65,16 +78,14 @@ export default class Home extends Component {
 
     Notification.requestPermission().then(function(result) {
       console.log(result);
-    });
-
-    
-    
+    });    
   
     document.body.addEventListener("mouseup", mouseUp);  //listen for mouse up event on body, not just the element you originally clicked on
     
     
     //displayNotification("starting app | TODO: remove; for testing only")
     
+    this.updateLoop()
 
     this.forceUpdate()
 
@@ -97,6 +108,7 @@ export default class Home extends Component {
     this.state.mouseTimer = null
     this.state.eventInfo = null
     localStorage.setItem(storedData, JSON.stringify(this.state))
+    console.log(this.state)
   }
   closeAll()
   {
@@ -258,6 +270,11 @@ export default class Home extends Component {
           <div id={styles.settings}>
             <center id={styles.settingsPanel}>
               <h1>Settings</h1>
+
+              <h3 onClick={() => {
+                this.state.notifications = !this.state.notifications
+                this.forceUpdate()
+              }} >{this.state.notifications?`disable notifications`:`enable notifications`}</h3>
 
               <h3 
               onTouchStart={e => this.mouseDown(e, () => this.clearTimeSegmentData())}
