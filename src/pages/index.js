@@ -3,7 +3,9 @@ import React, { Component, useState } from 'react'
 import styles from '../styles/Home.module.scss'
 
 const storedData = "timeable.data"
+const savedDataVersion = 1
 const loopTime = 30
+
 
 function NavBarSpacer () {
   return(<div style={{marginBottom:`16vh`}}></div>)
@@ -12,29 +14,48 @@ function NavBarSpacer () {
 export default class Home extends Component {
   constructor(props) {
     super(props)
+
+    var date = new Date()//2022, 2, 3, 6);
+    this.currentDate = date.toDateString()
+
     this.state = {
-      timeSegments : [],
+      days: {},
       notifications : false,
+      version: savedDataVersion
     }
+    
+    if (!this.state.days[date.toDateString()])
+    {//new day, create time data
+      this.state.days[this.currentDate] = this.createDayTemplate()
+    }
+
+
+  }
+
+  createDayTemplate() {
+    let segments = []
     for (let i = 0; i <= 24; i++) {
-      this.state.timeSegments.push({
+     segments.push({
         title:"",
         desc: "",
         activity: null,
         hour: i
       })
     }
+    return segments
   }
-  
+
   updateLoop() {
     console.log(this.state)    
     var date = new Date()//2022, 2, 3, 6);
+    //this.currentDate = date.toDateString()
     
+
     document.getElementById(styles.offlineIcon).style.display = navigator.onLine?`none`:`block`;
 
     this.forceUpdate()      
     
-    let currentSegment = this.state.timeSegments[date.getHours()]
+    let currentSegment = this.state.days[this.currentDate][date.getHours()]
 
     console.log(date.getHours())
     console.log(currentSegment)
@@ -66,7 +87,11 @@ export default class Home extends Component {
     }
 
     try {
-      this.setState(JSON.parse(data))
+      let newStateData = JSON.parse(data)
+      if (!newStateData.version){throw ErrorEvent}
+      if (newStateData.version < savedDataVersion){throw ErrorEvent}
+      
+      this.setState(newStateData)
       //this.state = JSON.parse(data)
     }
     catch(err){
@@ -135,7 +160,7 @@ export default class Home extends Component {
     console.log(currentTarget)
     console.log(currentTarget.attributes.segment.value)
 
-    this.state.currentSegment = () => {return(this.state.timeSegments[currentTarget.attributes.segment.value])}
+    this.state.currentSegment = () => {return(this.state.days[this.currentDate][currentTarget.attributes.segment.value])}
 
     let optionsMenu = document.getElementById(styles.timeSegmentOptions)
 
@@ -148,7 +173,7 @@ export default class Home extends Component {
   }
 
   clearTimeSegmentData () {
-    this.state.timeSegments.forEach(timeSegment => {
+    this.state.days[this.currentDate].forEach(timeSegment => {
       timeSegment.title = ""
       timeSegment.desc = ""
     })
@@ -163,6 +188,11 @@ export default class Home extends Component {
   }
 
   render() {
+    if (!this.state.days[this.currentDate])
+    {//new day, create time data
+      this.state.days[this.currentDate] = this.createDayTemplate()
+    }
+
     return (
       <div id={styles.container}>
         <Head>
@@ -180,13 +210,14 @@ export default class Home extends Component {
              
           
           <div className={styles.app}>
+            
 
             <div className={styles.activities}>
 
             </div>
 
             <div className={styles.timesheet}>
-              {this.state.timeSegments.map(timeSegment => {
+              {this.state.days[this.currentDate].map(timeSegment => {
                 return(
                 <div key={timeSegment.hour}
                  className={styles.timeSegment}
@@ -218,6 +249,19 @@ export default class Home extends Component {
           </div>
 
 
+          <div className={styles.dateHeader}><h3><b onClick={() => {//pervious
+            let dayBefore = new Date(this.currentDate)
+            dayBefore.setDate(dayBefore.getDate() - 1);
+
+            this.currentDate = dayBefore.toDateString()
+            this.forceUpdate()
+          }}>{` < `}</b>{this.currentDate}<b onClick={() => {//next
+            let dayAfter = new Date(this.currentDate)
+            dayAfter.setDate(dayAfter.getDate() + 1);
+            
+            this.currentDate = dayAfter.toDateString()
+            this.forceUpdate()
+          }}>{` > `}</b></h3></div>
           <div className={styles.dropOff}></div>
 
           <a onClick={() => {
@@ -270,11 +314,10 @@ export default class Home extends Component {
           <div id={styles.settings}>
             <center id={styles.settingsPanel}>
               <h1>Settings</h1>
-
               <h3 onClick={() => {
                 this.state.notifications = !this.state.notifications
                 this.forceUpdate()
-              }} >{this.state.notifications?`disable notifications`:`enable notifications`}</h3>
+              }} >{this.state.notifications?`Disable notifications`:`Enable notifications`}</h3>
 
               <h3 
               onTouchStart={e => this.mouseDown(e, () => this.clearTimeSegmentData())}
@@ -282,7 +325,7 @@ export default class Home extends Component {
               onTouchEnd={() => this.mouseUp()}
               onTouchCancel={() => this.mouseUp()}
               onMouseUp={() => this.mouseUp()}
-              >Clear time data</h3>
+              >Clear today</h3>
               <h3
               onTouchStart={e => this.mouseDown(e, () => this.clearAllAppData())}
               onMouseDown={e => this.mouseDown(e, () => this.clearAllAppData())}

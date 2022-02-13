@@ -139,6 +139,7 @@
 .timesheet {
   @extend .section;
   left: 3vw;
+  padding-top: 6vh;
 }
 
 .menubar {
@@ -218,6 +219,18 @@
   height: 14vh;
   width: 100vw;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0), black);
+}
+
+.dateHeader { 
+  position: absolute;
+  top: -1vh;
+  left: 0;
+  height: 7vh;
+  width: 100vw;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0), black);
+  text-align: center;
+  overflow: hidden;
+  color: red;  
 }
 
 @media (min-width: 600px) {
