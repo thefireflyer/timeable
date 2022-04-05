@@ -138,8 +138,8 @@
 
 .timesheet {
   @extend .section;
-  left: 3vw;
   padding-top: 6vh;
+  left: 3vw;
 }
 
 .menubar {
@@ -148,11 +148,16 @@
 }
 
 .timeSegment {
+  background-color: black;
+  left: 5rem;
+  right: 1rem;
+  width: auto;
   position: relative;
   border-radius: 20px;
   height: 10vh;
   min-height: 50px;
-  margin-bottom: 1vh;
+  //width: 75%;
+  overflow: none;
   * {
     pointer-events: none;
   }
@@ -210,9 +215,27 @@
     width: 100%;
     margin-top:1rem;
   }
+  
+  h3 {
+    border-radius: 1rem;
+    padding: 1rem;
+    width:100%;
+    border: #333 solid 1px;
+  }
+
+  #deleteTimeSegmentButton {
+    background-color: red;
+    color: black;
+    text-align: center;
+    margin-top: 5vh;
+  }
+}
+#timeSegmentOptions h3:active {
+  background-color: #333;
 }
 
 .dropOff {
+  user-select: none;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -222,6 +245,8 @@
 }
 
 .dateHeader { 
+  
+  user-select: none;
   position: absolute;
   top: -1vh;
   left: 0;
@@ -234,5 +259,65 @@
 }
 
 @media (min-width: 600px) {
+  .dropOff {
+    display: none;
+  }
+}
 
+.labels {
+  position: absolute;
+  padding-top: 6vh;
+  top: 0;
+  padding-bottom: 14vh;
+  user-select: none;
+}
+
+.label {
+  position: relative;
+  height: 10vh;
+  min-height: 50px;
+  * {
+    pointer-events: none;
+  }
+  h3 {
+    color: red;
+    text-decoration: overline;
+  }
+  h2 {
+    position: absolute;
+    top: -1rem;
+    right: 1rem;
+    color: adjust-hue($color: red, $degrees: 60);
+    max-width: 75%;
+  }
+  h4 {
+    position: absolute;
+    right: 2rem;
+    max-width: 70%;
+  }
+  padding: 1rem;
+  display: flex;
+  
+  overflow: hidden;
+  //background-color:#222;
+}
+
+.selectors {
+  position: absolute;
+  padding-top: 5vh;
+  width: 95%;
+  left: 2.5%;
+  top: 0;
+  padding-bottom: 14vh;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.selector {
+  margin-left: 20%;
+  position: relative;
+  //border-radius: 20px;
+  height: 5vh;
+  min-height: 25px;
+  width: 75%;
 }
